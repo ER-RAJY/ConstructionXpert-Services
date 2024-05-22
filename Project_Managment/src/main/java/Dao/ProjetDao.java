@@ -20,4 +20,6 @@ public interface ProjetDao {
 
     // Méthode pour supprimer un projet
     void deleteProjet(int id) throws SQLException;
+
+    Projet getProjet(int i);
 }

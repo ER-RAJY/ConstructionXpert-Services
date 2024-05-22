@@ -6,16 +6,20 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProjetDaoIMp implements ProjetDao {
+public class ProjetDaoIMp {
     private Connection connection;
 
     public ProjetDaoIMp(Connection connection) {
         this.connection = connection;
     }
 
+    public ProjetDaoIMp() {
+
+    }
+
     // Create
     public void addProjet(Projet projet) throws SQLException {
-        String query = "INSERT INTO projet (nom, description, dateDebut, dateFin, budget) VALUES (?, ?, ?, ?, ?)";
+        String query = "INSERT INTO projets (nom, description, date_debut, date_fin, budget) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, projet.getNom());
             stmt.setString(2, projet.getDescription());
@@ -27,8 +31,8 @@ public class ProjetDaoIMp implements ProjetDao {
     }
 
     // Read by ID
-    public Projet getProjetById(int id) throws SQLException {
-        String query = "SELECT * FROM projet WHERE id = ?";
+    public Projet getProjet(int id) throws SQLException {
+        String query = "SELECT * FROM projets WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
@@ -37,8 +41,8 @@ public class ProjetDaoIMp implements ProjetDao {
                             rs.getInt("id"),
                             rs.getString("nom"),
                             rs.getString("description"),
-                            rs.getString("dateDebut"),
-                            rs.getString("dateFin"),
+                            rs.getString("date_debut"),
+                            rs.getString("date_fin"),
                             rs.getDouble("budget")
                     );
                 }
@@ -48,30 +52,28 @@ public class ProjetDaoIMp implements ProjetDao {
     }
 
     // Read all
-    public List<Projet> getAllProjets() {
+    public List<Projet> getAllProjets() throws SQLException {
         List<Projet> projets = new ArrayList<>();
-        String query = "SELECT * FROM projet";
+        String query = "SELECT * FROM projets";
         try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(query)) {
             while (rs.next()) {
                 Projet projet = new Projet(
                         rs.getInt("id"),
                         rs.getString("nom"),
                         rs.getString("description"),
-                        rs.getString("dateDebut"),
-                        rs.getString("dateFin"),
+                        rs.getString("date_debut"),
+                        rs.getString("date_fin"),
                         rs.getDouble("budget")
                 );
                 projets.add(projet);
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
         return projets;
     }
 
     // Update
     public void updateProjet(Projet projet) throws SQLException {
-        String query = "UPDATE projet SET nom = ?, description = ?, dateDebut = ?, dateFin = ?, budget = ? WHERE id = ?";
+        String query = "UPDATE projets SET nom = ?, description = ?, date_debut = ?, date_fin = ?, budget = ? WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, projet.getNom());
             stmt.setString(2, projet.getDescription());
@@ -85,10 +87,12 @@ public class ProjetDaoIMp implements ProjetDao {
 
     // Delete
     public void deleteProjet(int id) throws SQLException {
-        String query = "DELETE FROM projet WHERE id = ?";
+        String query = "DELETE FROM projets WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, id);
             stmt.executeUpdate();
         }
     }
+
+
 }
